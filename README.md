@@ -11,6 +11,7 @@ npm start
 - 启动个性化配置
 `npm run eject`
 - 访问localhost:3000
+
 #2.安装第三方库
 - yarn add redux
 - yarn add react-redux
@@ -21,6 +22,10 @@ npm start
 - yarn add babel-plugin-import
 - yarn add cookie-parser
 - yarn add babel-plugin-transform-decorators-legacy
+- yarn add body-parser
+- yarn add utility(md5加密)
+- yarn add prop-type(react属性检查)
+- yarn add browser-cookies
 
 
 #3.Express+mongodb
@@ -53,3 +58,12 @@ mongoose.connection.on('connected',function(){
     console.log('mongo connect success')
 });
 ```
+
+#4.高阶组件
+- imooc-from->index.js
+#5.Socket.io基础知识
+- 安装
+    - 后端 `yarn add socket.io`
+    - 前端 `yarn add socket.io-client`
+
+#6.emojipedia.org

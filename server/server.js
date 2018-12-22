@@ -1,46 +1,31 @@
 const express = require('express');
-const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const model = require('./model');
+const Chat = model.getModel('chat');
 
-//连接mongo
-const DB_URL = 'mongodb://localhost:27017';
-mongoose.connect(DB_URL);
-mongoose.connection.on('connected',function(){
-    console.log('mongo connect success')
-});
-// 类似于mysql的表 mongo里有文档、字段的概念
-const User = mongoose.model('user',new mongoose.Schema({
-    user:{type:String,require:true},
-    age:{type:Number,require:true}
-}));
-//新增数据
-// User.create({
-//     user:'xiaoming',
-//     age:16
-// },function(err,doc){
-//     if(!err){
-//         console.log(doc)
-//     }else{
-//         console.log(err)
-//     }
-// });
-//新建app
-// User.remove({age:18},function (err,doc) {
-//     console.log(doc)
-// });
-// User.update({user:'xiaoming'},{'$set':{age:26}},function (err,doc) {
-//     console.log(doc)
-// });
 const app = express();
+//work with express
+const server = require('http').Server(app);
+const io = require('socket.io')(server);
 
-app.get('/',function(req,res){
-    res.send('<h1>hello world</h1>')
-});
-app.get('/data',function (req,res) {
-    User.find({},function(err,doc){
-        res.json(doc)
+io.on('connection',function (socket) {
+    // console.log('user login')
+    socket.on('sendmsg',function(data){
+        const {from,to,msg} = data;
+        const chatid = [from,to].sort().join('_');
+        Chat.create({chatid,from,to,content:msg},function (err,doc) {
+            io.emit('recvmsg',Object.assign({},doc._doc))
+        })
+
     })
 });
 
-app.listen(9093,function(){
+const userRouter = require('./user');
+
+app.use(cookieParser());
+app.use(bodyParser.json());
+app.use('/user',userRouter);
+server.listen(9093,function(){
     console.log('Node app start at port 9093')
 });
